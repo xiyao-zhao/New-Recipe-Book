@@ -3,8 +3,12 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  title = 'recipe-book';
+  clickedButton: string = 'recipe';
+
+  buttonClickedHandler(button: string) {
+    this.clickedButton = button;
+  }
 }
