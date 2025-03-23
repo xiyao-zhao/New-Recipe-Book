@@ -5,7 +5,8 @@ import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ShoppingListService {
-  ingredientAdded = new Subject<Ingredient[]>();
+  ingredientChanged = new Subject<Ingredient[]>();
+  startedEditing = new Subject<number>();
 
   private ingredients: Ingredient[] = [
     new Ingredient('Apples', 5),
@@ -16,27 +17,39 @@ export class ShoppingListService {
     return this.ingredients.slice();
   }
 
+  getIngredient(index: number) {
+    return this.ingredients[index];
+  }
+
   addIngredient(ingredient: Ingredient) {
-    this.addOrUpdateIngredient(ingredient);
-    this.ingredientAdded.next(this.ingredients.slice());
+    this.ingredients.push(ingredient);
+    this.ingredientChanged.next(this.ingredients.slice());
   }
 
   addIngredients(ingredients: Ingredient[]) {
-    ingredients.forEach((ingredient) => {
-      this.addOrUpdateIngredient(ingredient);
-    });
-    this.ingredientAdded.next(this.ingredients.slice());
+    this.ingredients.push(...ingredients);
+    this.ingredientChanged.next(this.ingredients.slice());
   }
 
-  addOrUpdateIngredient(ingredient: Ingredient) {
-    const existing = this.ingredients.find(
-      (ing) => ing.name === ingredient.name
-    );
-
-    if (existing) {
-      existing.amount += ingredient.amount;
-    } else {
-      this.ingredients.push(JSON.parse(JSON.stringify(ingredient)));
-    }
+  updateIngredient(index: number, newIngredient: Ingredient) {
+    this.ingredients[index] = newIngredient;
+    this.ingredientChanged.next(this.ingredients.slice());
   }
+
+  deleteIngredient(index: number) {
+    this.ingredients.splice(index, 1);
+    this.ingredientChanged.next(this.ingredients.slice());
+  }
+
+  // addOrUpdateIngredient(ingredient: Ingredient) {
+  //   const existing = this.ingredients.find(
+  //     (ing) => ing.name === ingredient.name
+  //   );
+
+  //   if (existing) {
+  //     existing.amount += ingredient.amount;
+  //   } else {
+  //     this.ingredients.push(JSON.parse(JSON.stringify(ingredient)));
+  //   }
+  // }
 }
